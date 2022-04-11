@@ -2,22 +2,20 @@ import sqlalchemy.types
 from sqlalchemy import create_engine
 import pymysql
 import pandas as pd
-from selenium import webdriver
 from bs4 import BeautifulSoup
 import requests
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium import webdriver
 
 class newscrawler:
-    def __init__(self,driver,heads):
+    def __init__(self,heads):
         self.heads = heads
-        self.dirver = driver
-
-    def select_categry(self):
-        pass
+        self.driver = webdriver.Chrome(ChromeDriverManager().install())
 
     def get_article_url(self,url):
         try:
-            self.dirver.get(url)
-            html = self.dirver.page_source
+            self.driver.get(url)
+            html = self.driver.page_source
             bs = BeautifulSoup(html,"html.parser")
             div = bs.find("div",{"class" : "section_body"})
             li = div.findAll("li")
