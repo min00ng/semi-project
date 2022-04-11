@@ -38,7 +38,7 @@ def get_news(url_lst):
             # 파싱 시작
             bs = BeautifulSoup(res.text,'html.parser')
 
-            ################ 뉴스 카테고리 - news_category ###############
+            ################ 카테고리 - news_category ###############
             category = bs.find('div', {'class': 'article_list'})
             category = category.text.strip()[:2]
 
@@ -79,7 +79,7 @@ def get_news(url_lst):
 
     finally:
         ##################### 데이터 프레임 만들기 ####################
-        idx = ['뉴스 카테고리', '언론사', '기사제목', '날짜', '본문']  
+        idx = ['카테고리', '언론사', '기사제목', '날짜', '본문']  
         news_data = [news_category, press, main_title, news_date, article_content]
         
         for i, n in zip(idx, news_data):
