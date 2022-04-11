@@ -17,7 +17,6 @@
 
 import pandas as pd
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
 import requests
 from bs4 import BeautifulSoup
 
@@ -37,6 +36,9 @@ def get_news(url_lst):
 
             # 파싱 시작
             bs = BeautifulSoup(res.text,'html.parser')
+            
+            # selenium 활용
+            driver.get(url) 
 
             ################ 뉴스 카테고리 - news_category ###############
             news_category = bs.find('div', {'class': 'article_list'})
@@ -51,8 +53,8 @@ def get_news(url_lst):
             main_title = main_title.h3.text
 
             ################ 소제목 - subtitle ################
-            # 없는 기사들이 대부분임!!! # 
-            # subtitle = bs.fine()
+            # 없는 기사들이 대부분임!
+            # subtitle 
 
             ################ 날짜 - news_date ###############
             news_date = bs.find('span', {'class', 't11'})
@@ -69,54 +71,41 @@ def get_news(url_lst):
 
             ################ 기사에 대한 반응 - response_lst ###############
 
-            # 실시간으로 변하는 요소들은 제대로 파싱 불가!!!
-            # 댓글수도 마찬가지임. webdriver 사용?
+            # 실시간으로 변하는 요소들은 bs4로 파싱 불가
+            # 우선 selenium으로 해결함 ----> 속도가 느리다는 한계
 
             # 모든 반응 리스트 - response_lst
-            response_lst = bs.find('div', {'class': "_reactionModule u_likeit"})
-            response_lst = list(i for i in response_lst.text.split('\n')[11:] if i)
+            response_lst = driver.find_element_by_xpath('//*[@id="spiLayer"]/div[1]').text
 
             # 좋아요 - good
-            good = bs.find('li', {'class', 'u_likeit_list good'})
-            good = good.text.strip()
+            good = response_lst.split()[1]
 
             # 훈훈해요 - warm
-            warm = bs.find('li',{'class': 'u_likeit_list warm'})
-            warm = warm.text.strip()
+            warm = response_lst.split()[3]
 
             # 슬퍼요 - sad
-            sad = bs.find('li', {'class', 'u_likeit_list sad'})
-            sad = sad.text.strip()
+            sad = response_lst.split()[5]
 
             # 화나요 - angry
-            angry = bs.find('li', {'class', 'u_likeit_list angry'})
-            angry = angry.text.strip()
+            angry = response_lst.split()[7]
 
             # 후속기사 원해요 - want
-            want = bs.find('li', {'class', 'u_likeit_list want'})
-            want = want.text.strip()
+            want = response_lst.split()[10]
 
             ##################### 댓글수 - comment_num ####################
-            # 파싱 제대로 수행 X
-            # 해결방법 찾아야 함. 
-
-            comment_num = bs.find('li', {'class': 'u_cbox_count_info'})
-            # comment_num = bs.find('li', {'class': 'u_cbox_comment_count u_cbox_comment_count3'}).find('span', {'class': 'u_cbox_info_txt'})
-            comment_num = comment_num.text
+            # bs로는 파싱 제대로 수행 X
+            # selenium으로 해결
+            comment_num = driver.find_element_by_xpath('//*[@id="cbox_module"]/div[2]/div[2]/ul/li[1]/span').text
 
             ##################### 본문 요약 - news_summary ####################
             # 파싱 제대로 수행 X
-            # 해결방법 찾기!!
-            news_summary = bs.find('div', {'class': '_contents_body'})
-            news_summary = news_summary.text
-
+            # 해결방법 찾기!! ---> 요약봇의 요약문은 스크랩이 안 되는 듯함. 차라리 요약문을 우리가 생성해보아도 좋을 듯함!
+            news_summary = bs.find('div', {'class': '_contents_body'}).text
 
             ################ 추천수 recommend ####################
-            # 파싱 제대로 수행 X
-            # 해결방법 찾기!!
-            recommend = bs.find('em', {'class': 'u_cnt _count'})
-            recommend = recommend.text
-
+            # bs로 파싱 제대로 수행 X
+            # selenium으로 해결
+            recommend = driver.find_element_by_xpath('//*[@id="toMainContainer"]/a/em[2]').text
 
     except Exception as e:
         print(e)
@@ -131,7 +120,7 @@ def get_news(url_lst):
         for i, n in zip(idx, news_data):
             news_data_ser[i] = n
         
-        # 데이터 프레임으로 저장하기 (T = transpose(), 행과 열 위치 바꿔주기)
+        # 데이터 프레임으로 저장하기 (T = transpose(), 행과 열 위치 바꿔주기, idx가 열이 되게끔)
         news_data = pd.DataFrame(news_data_ser).T 
 
         
