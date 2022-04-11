@@ -26,7 +26,7 @@ def get_news(url_lst):
 
     try:
         for url in url_lst:
-            ############### 시리즈 객체 생성 ###############
+            ############### 데이터 프레임 객체 생성 ###############
             news_data_df = pd.DataFrame()
             
             #################### 파싱하기 ####################
@@ -62,7 +62,7 @@ def get_news(url_lst):
 
             news_date.append(n_date)
 
-            ################ 본문 - news_article ####################
+            ################ 본문 - article_content ####################
             news_article = bs.find('div', {'id': "articleBodyContents"})
            
             # 문단 별로 나누어 리스트에 저장하는 방식   - 1
