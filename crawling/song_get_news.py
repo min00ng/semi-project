@@ -25,10 +25,7 @@ def get_news(url_lst):
     article_content = []
 
     try:
-        for url in url_lst:
-            ############### 시리즈 객체 생성 ###############
-            news_data_df = pd.DataFrame()
-            
+        for url in url_lst:          
             #################### 파싱하기 ####################
 
             # 접근을 위한 사용자 정보 입력하기 
