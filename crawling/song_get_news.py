@@ -11,7 +11,7 @@
 ###################################
 
 
-import pandas as pd
+# import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
@@ -78,14 +78,14 @@ def get_news(url_lst):
 
     finally:
 
-        ##################### 데이터 프레임 만들기 ####################
+        ##################### 리스트 만들기 ####################
         # idx = ['카테고리', '언론사', '기사제목', '날짜', '본문']
         news_data = [category, press, title, date, article_content]
         
         #for i, n in zip(idx, news_data):
             #news_data_df[i] = n
 
-        ########## get_news 함수의 값으로 기사 정보를 담은 데이터 프레임 반환하기 #########
+        ########## get_news 함수의 값으로 기사 정보를 담은 리스트 반환하기 #########
         return news_data
 
         
