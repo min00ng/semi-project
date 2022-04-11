@@ -32,8 +32,8 @@ def get_news(url_lst):
             #################### 파싱하기 ####################
 
             # 접근을 위한 사용자 정보 입력하기 
-            headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36'}
-            res = requests.get(url, headers = headers)
+            heads = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36'}
+            res = requests.get(url, headers = heads)
 
             # 파싱 시작
             bs = BeautifulSoup(res.text,'html.parser')
