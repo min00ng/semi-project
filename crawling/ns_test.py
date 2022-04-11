@@ -20,7 +20,7 @@ for url in category_url:
         lst = ns.get_article_url(url)
         for a_url in lst:
             all_news.append(ns.get_news(a_url))
-        url = ns.go_next_page(url)
+        url = ns.go_next_page()
         if 1:
             break
 

@@ -30,7 +30,8 @@ class newscrawler:
             return url_list
 
     def go_next_page(self):
-        pass
+        url2 = "https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1=104#&date=%2000:00:00&page=2"
+
 
     def get_news(self,url_lst):
         ############ 데이터를 담을 리스트 생성 ############
