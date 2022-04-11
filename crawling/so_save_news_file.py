@@ -1,9 +1,10 @@
 from datetime import datetime
 import pandas as pd
 now = datetime.now()
-file_path =''  #결과 저장할 경로
 
-def save_news_file(file_path,df):
+file_path='' #파일 저장 경로
+
+def save_news_file(file_path,df):#데이터프레임 형식 데이터 입력
     outputFileName = '%s-%s-%s  %s시 %s분 %s초 merging.xlsx' % (now.year, now.month, now.day, now.hour, now.minute, now.second)
-    csv = df.to_csv(file_path+outputFileName)
-    return csv 
+    df.to_excel(file_path+outputFileName)
+    return 
