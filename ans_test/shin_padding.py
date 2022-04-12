@@ -12,7 +12,6 @@ def padding(df):
   encoded = tokenizer.texts_to_sequences(df['과일'])
   padding = pad_sequences(encoded)
 
-
   return padding
 
 padding(df)
