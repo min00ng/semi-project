@@ -7,5 +7,5 @@ def news_summary(url):
     news.download()
     news.parse()
     summarized_news=summarize(news.text, word_count=50)
-    print(summarized_news)
+    return(summarized_news)
     
