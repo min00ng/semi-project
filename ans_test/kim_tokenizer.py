@@ -8,6 +8,7 @@ from konlpy.tag import Okt
 from konlpy.tag import Kkma
 import kss
 from konlpy.tag import *
+import re
 
 def text_cleaning(corpus):
     cleaned_text=""
@@ -28,6 +29,10 @@ okt = Okt()
 
 def tokenizer(row):
   return hannanum.morphs(row)
+
+df = pd.read_csv("../data/2022-04-12 news data, test.csv")
+
+token_result = df[["기사제목","본문"]]
 
 token_result['token']=token_result['본문'].apply(tokenizer)
 token_result.head()
