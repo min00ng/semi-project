@@ -76,7 +76,7 @@ class newscrawler:
             bs = BeautifulSoup(res.text,'html.parser')
 
             ################ 카테고리 - category ###############
-            category = bs.find('div', {'class': 'article_list'})
+            category = bs.find('div', {'class': 'article_list'})  
             category = category.text.strip()[:2]
 
             # news_category.append(category)
@@ -116,7 +116,7 @@ class newscrawler:
             category = None
             press = None
             title = None
-            date = str(datetime.date.today())
+            date = str(datetime.date.today()).replace("-",".") + "."
             article_content = None
 
         finally:
@@ -147,7 +147,6 @@ class newscrawler:
             for a_url in lst:
                 news = self.get_news(a_url)
                 news_date = news[3].replace(".","-")[:-1]
-                news_date = news_date[:-1] + "2"
                 if news_date != str(datetime.date.today()):
                     again = False
                     break
