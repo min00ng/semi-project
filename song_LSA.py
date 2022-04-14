@@ -83,7 +83,7 @@ print('명사 추출 :',tokenized_nouns)
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-def show_relevant_keyword_by_title(keyword, df): # 키워드와 사용할 뉴스 데이터를 인자로 입력받음
+def show_relevant_keyword_from_title(keyword, df): # 키워드와 사용할 뉴스 데이터를 인자로 입력받음
     
     # stop_words를 전에 했던 것처럼 txt 파일 형태로 제공하면 에러 발생! 
     # max_features는 임의로 2000개로 설정하였음.
@@ -120,7 +120,7 @@ def show_relevant_keyword_by_title(keyword, df): # 키워드와 사용할 뉴스
 
 ############## 함수 2번 : 기사 본문에서 추출하기 ###############
 
-def show_relevant_keyword_by_article(keyword, df): # 키워드와 사용할 뉴스 데이터를 인자로 입력받음
+def show_relevant_keyword_from_article(keyword, df): # 키워드와 사용할 뉴스 데이터를 인자로 입력받음
     
     # stop_words를 전에 했던 것처럼 txt 파일 형태로 제공하면 에러 발생!
     # 일단 에러를 막기 위해 'english'로 설정하였음. 
