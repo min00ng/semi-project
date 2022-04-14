@@ -13,6 +13,7 @@ for d in corpus:
 
 word_extractor = WordExtractor()
 word_extractor.train(corpus)
+word_score = word_extractor.extract()
 
 #잘되는지 확인해보기
 word_score["검수완박"].cohesion_forward
