@@ -12,7 +12,14 @@ from tensorflow.keras.preprocessing.text import Tokenizer
 import numpy as np
 
 
-###### 필요한 함수 두 개 정의 ######
+
+###### 필요한 함수 정의 ######
+
+def stemmer(text):
+    text = re.sub("[^가-힣ㄱ-ㅎㅏ-ㅣ\\s]","",text)
+    okt = Okt()
+    text = okt.morphs(text, stem= True)
+    return text
 
 def remove_stop_words(text):
     word_token = stemmer(text)
@@ -29,10 +36,12 @@ def create_dic(texts, num):
     
     return word_dic
 
+
+
 ####################################
 
 # 데이터 불러오기 (0412 뉴스데이터)
-data = pd.read_csv('data/2022-04-12 news data, test.csv')
+data = pd.read_csv('./2022-04-12 news data, test.csv')
 
 # 714번째 결측치 제거
 df = data.drop([714], axis = 0)
@@ -74,12 +83,37 @@ print('명사 추출 :',tokenized_nouns)
 
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
+def show_relevant_keyword(keyword, df): # 키워드와 사용할 뉴스 데이터를 인자로 입력받음
+    
+    # stop_words를 전에 했던 것처럼 txt 파일 형태로 제공하면 에러 발생! 
+    # max_features는 임의로 2000개로 설정하였음.
+    tv = TfidfVectorizer(stop_words = 이 부분 해결해야 함, max_features = 2000)
+    x = tv.fit_transform(df.기사제목)
+    # words에는 feature가 된 단어들이 2000개 담겨 있음. 
+    words = tv.get_feature_names() 
 
+    ############## SVD 특이값 분해 ################
+    from sklearn.decomposition import TruncatedSVD
 
-def show_relevant_keyword(word, df): # 키워드, 사용할 뉴스 데이터를 인자로 입력받음
-    cv = TfidfVectorizer(stop_words = 지정해줘야 함, max_features = 1000)
-    x = cv.fit_transform(df.기사제목)
-    words = cv.get_feature_names()
+    # n_components 는 max_features보다 적어야 함. 
+    # 임의로 300개로 설정하였음
+    svd = TruncatedSVD(n_components = 300, random_state = 1234)
+    word_idx = words.index(keyword) # 사용자에게 입력받은 키워드의 인덱스 위치 확인
+    svd.components_[: word_idx]
+
+    # 시각화 
+    # import matplotlib.pyplot as plt
+    # plt.plot(svd.components_[:, word_idx])
+
+    kw_idx = svd.components_[:, word_idx].argmax()
+
+    relevant_words_df = pd.DataFrame({'단어': words, 'loading': svd.components_[kw_idx]})
+    rel_words_df = relevant_words_df.sort_values('loading').tail()
+    rel_words_df = rel_words_df.sort_values('loading', ascending = False)
+
+    # 사용자가 입력한 키워드와 관련있는 상위 5개 단어를 데이터 프레임으로 반환
+    return rel_words_df
+    
 
 
 
