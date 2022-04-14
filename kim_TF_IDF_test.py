@@ -1,7 +1,7 @@
 import pandas as pd
 from math import log
 
-docs=docs=[
+docs=[
     '먹고 싶은 사과',
     '먹고 싶은 바나나',
     '길고 노란 바나나',
