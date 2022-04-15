@@ -689,7 +689,7 @@ org
 naver
 cbs
 yna
-속보'
+속보
 기사
 내용
 요약
