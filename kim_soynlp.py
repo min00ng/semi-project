@@ -2,7 +2,8 @@ from soynlp import DoublespaceLineCorpus
 from soynlp.word import WordExtractor
 
 # 문서 단위 말뭉치 생성 
-corpus = DoublespaceLineCorpus("/content/4.12 news data.csv")
+corpus = DoublespaceLineCorpus("/content/4.12 news data.csv",iter_sent=True)
+
 #앞 5개 문서 인쇄
 i = 0
 for d in corpus:
