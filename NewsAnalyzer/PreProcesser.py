@@ -5,56 +5,65 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing.text import Tokenizer
 import numpy as np
 from konlpy.tag import Hannanum
+from soynlp import DoublespaceLineCorpus
+from soynlp.word import WordExtractor
+from soynlp.tokenizer import MaxScoreTokenizer
 
 class preprocesser:
     def __init__(self) -> None:
-        self.okt = Okt()
-        self.han = Hannanum
-        
-################ 기존 ################    
+        pass
+
     def road_data(self,file_path): # 데이터 불러오기, 불필요한 열 삭제, null값 삭제.
         df = pd.read_csv(file_path)
         df2 = df.drop(["Unnamed: 0"],axis=1)
         df3 = df2.dropna(axis=0)
         return df3
 
-    def stemmer(self, text):  # 어간추출
-        text = re.sub("[^가-힣ㄱ-ㅎㅏ-ㅣ\\s]","",text)
-        text = self.okt.morphs(text, stem= True)
-        return text # 각각의 단어가 리스트 형태로 리턴.
+    def clean_text(self,title):
+        text_rmv = re.sub('[-=+,#/\?:^.@*\"※%~∼ㆍ!【】』㈜©囹圄秋 ■◆◇▷▶◁◀ △▲▽▼<>‘|\(\)\[\]`\'…》→←↑↓↔〓♤♠♡♥♧♣⊙◈▣◐◑☆★\”\“\’·※~ ! @ # $ % ^ & * \ " ]', ' ', title)
+        text_rmv = ' '.join(text_rmv.split())
+        return text_rmv
 
-    def create_dic(self, texts, num): # 인자로 단어사전에 수록할 단어목록(texts), 단어 개수(num)를 입력 받음
-        tk = tf.keras.preprocessing.text.Tokenizer(num_words = num, oov_token = '알 수 없음')
-        
-        # key값으로 단어, value값으로 빈도순위가 할당된 단어사전 생성
-        tk.fit_on_texts(texts)
-        word_dic = tk.index_word
-        
-        return word_dic
+    def make_corpus(self,file_path):
+        corpus = DoublespaceLineCorpus("data/2022-04-13 news data.csv",iter_sent=True)
+        word_extractor = WordExtractor()
+        word_extractor.train(corpus)
+        word_score = word_extractor.extract()
+        scores = {word:score.cohesion_forward for word, score in word_score.items()}
+        return scores
 
-    def preprocess(self,sets): # 이중 리스트를 받아서 패딩된 인코딩 리스트로 반환
-        texts = []
-        for text in sets:
-            tt = self.stemmer(text)
-            texts.append(tt)
+    def get_nouns(self, scores, text): # text는 문장이 들어가야함.
+        maxscore_tokenizer = MaxScoreTokenizer(scores=scores)
+        text = self.clean_text(text)
+        text = maxscore_tokenizer.tokenize(text)
+        return text
 
-        tokenizer = Tokenizer()
-        tokenizer.fit_on_texts(texts)
-        encoded = tokenizer.texts_to_sequences(texts)
+    def make_list_to_str(self, lst):
+        return " ".join(lst)
 
-        max_len = max(len(item) for item in encoded)
+    def prep(self, file_path, title = True, tokenizing = True, save = False):
+        df = self.road_data(file_path)
+        if title:
+            data = df["기사제목"]
+            name = "title"
+        else:
+            data = df["본문"]
+            name = "news"
+        scores = self.make_corpus(file_path)
+        all_data = []
+        for str in data:
+            text = self.get_nouns(scores, str)
+            if tokenizing:
+                all_data.append(text2)
+            else:
+                text2 = self.make_list_to_str(text)
+                all_data.append(text2)
+        if save:
+            outputFileName = "preprocessed " + name
+            dd = pd.DataFrame(all_data)
+            dd.to_csv("data/" + outputFileName)
+        else:
+            return all_data
 
-        for sentence in encoded:
-            while len(sentence) < max_len:
-                sentence.append(0)
-
-        padded_np = np.array(encoded)
-        return padded_np
-
-
-########## 새롭게 만들기 ##############
-    def clean_text(self, text) : # 문장의 특수문자를 공백으로 대체
-        pass
-
-    def get_nouns(self, text): # 문장에서 명사 뽑아오기
+    def remove_stop_words(self):
         pass
