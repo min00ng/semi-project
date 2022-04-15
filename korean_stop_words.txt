@@ -780,17 +780,18 @@ YTN
 메일 
 social
 ytn
-<<<<<<< HEAD
 go
 www
 article
 선
 후
 수
-=======
-
-go
-www
-
-article
->>>>>>> 34f05e44ba2a332d09415365bcdbcec1935b62f3
+서
+게임사
+사분기
+영업이익
+인앱결제
+갤럭시S
+꼴
+억
+겹
