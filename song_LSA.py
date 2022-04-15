@@ -58,15 +58,6 @@ clean_title = sum(clean_title, [])
 title_dic = create_dic(clean_title, 1000)
 
 
-########## 전처리 관련 시도 ##########
-okt = Okt()
-
-tokenized_title = okt.pos(title[1045])
-tokenized_nouns = ' '.join([word[0] for word in tokenized_title if word[1] == 'Noun'])
-
-print('품사 태깅 10개만 출력 :',tokenized_title[:10])
-print('명사 추출 :',tokenized_nouns)
-
 
 ############################################################
 
@@ -86,8 +77,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 def show_relevant_keyword_from_title(keyword, df): # 키워드와 사용할 뉴스 데이터를 인자로 입력받음
     
     # stop_words를 전에 했던 것처럼 txt 파일 형태로 제공하면 에러 발생! 
-    # max_features는 임의로 2000개로 설정하였음.
-    tv = TfidfVectorizer(stop_words = 이 부분 해결해야 함, max_features = 2000)
+    # 제목이 대상일 때 max_features는 5000에서 가장 이상적인 결과를 보임
+    tv = TfidfVectorizer(stop_words = 'english', max_features = 5000)
     x = tv.fit_transform(df.기사제목)
     # words에는 feature가 된 단어들이 2000개 담겨 있음. 
     words = tv.get_feature_names() 
@@ -124,8 +115,8 @@ def show_relevant_keyword_from_article(keyword, df): # 키워드와 사용할 �
     
     # stop_words를 전에 했던 것처럼 txt 파일 형태로 제공하면 에러 발생!
     # 일단 에러를 막기 위해 'english'로 설정하였음. 
-    # max_features는 임의로 2000개로 설정하였음.
-    tv = TfidfVectorizer(stop_words = 'english', max_features = 2000)
+    # max_features는 3000개에서 이상적인 결과를 보임
+    tv = TfidfVectorizer(stop_words = 'english', max_features = 3000)
     x = tv.fit_transform(df.본문)
     # words에는 feature가 된 단어들이 2000개 담겨 있음. 
     words = tv.get_feature_names() 
@@ -152,3 +143,38 @@ def show_relevant_keyword_from_article(keyword, df): # 키워드와 사용할 �
     # 사용자가 입력한 키워드와 관련있는 상위 5개 단어를 데이터 프레임으로 반환
     return rel_words_df
     
+
+################## 함수 3번 : 기사 제목 + 본문 #################
+
+def show_relevant_keyword(keyword, df): # 키워드와 사용할 뉴스 데이터를 인자로 입력받음
+    
+    # stop_words를 전에 했던 것처럼 txt 파일 형태로 제공하면 에러 발생!
+    # 일단 에러를 막기 위해 'english'로 설정하였음. 
+    # max_features는 8000개로 설정함
+    tv = TfidfVectorizer(stop_words = 'english', max_features = 8000)
+    data = df.기사제목 + df.본문
+    x = tv.fit_transform(data)
+    # words에는 feature가 된 단어들이 2000개 담겨 있음. 
+    words = tv.get_feature_names() 
+
+    ############## SVD 특이값 분해 ################
+    from sklearn.decomposition import TruncatedSVD
+
+    # n_components 는 max_features보다 적어야 함. 
+    # 임의로 300개로 설정하였음
+    svd = TruncatedSVD(n_components = 300, random_state = 1234)
+    word_idx = words.index(keyword) # 사용자에게 입력받은 키워드의 인덱스 위치 확인
+    svd.fit(x)
+
+    # 시각화 
+    # import matplotlib.pyplot as plt
+    # plt.plot(svd.components_[:, word_idx])
+
+    kw_idx = svd.components_[:, word_idx].argmax()
+
+    relevant_words_df = pd.DataFrame({'단어': words, 'loading': svd.components_[kw_idx]})
+    rel_words_df = relevant_words_df.sort_values('loading').tail()
+    rel_words_df = rel_words_df.sort_values('loading', ascending = False)
+
+    # 사용자가 입력한 키워드와 관련있는 상위 5개 단어를 데이터 프레임으로 반환
+    return rel_words_df
