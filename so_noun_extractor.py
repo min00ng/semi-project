@@ -5,6 +5,9 @@ def noun_extractor(sentence):
     nouns =[]
     kiwi = Kiwi()
     stopwords = Stopwords()
+    kiwi.add_user_word('국방부', 'NNP', 0)
+    kiwi.add_user_word('젤렌스키', 'NNP', 0)
+    kiwi.add_user_word('윤희숙', 'NNP', 0)
     kiwi.add_user_word('내로남불', 'NNP', 0)
     kiwi.add_user_word('검수완박', 'NNP', 0)
     result_iter = kiwi.tokenize(sentence, normalize_coda=True,stopwords=stopwords)
