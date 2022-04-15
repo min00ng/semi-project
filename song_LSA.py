@@ -154,8 +154,11 @@ def show_relevant_keyword(keyword, df): # 키워드와 사용할 뉴스 데이�
     tv = TfidfVectorizer(stop_words = 'english', max_features = 8000)
     data = df.기사제목 + df.본문
     x = tv.fit_transform(data)
-    # words에는 feature가 된 단어들이 2000개 담겨 있음. 
+    # words에는 feature가 된 단어들이 8000개 담겨 있음. 
     words = tv.get_feature_names() 
+    # 불용어 처리해주기
+    stopwords = pd.read_csv('./korean_stop_words.txt')
+    words = [w for w in words if w not in stopwords]
 
     ############## SVD 특이값 분해 ################
     from sklearn.decomposition import TruncatedSVD
