@@ -39,23 +39,11 @@ def create_dic(texts, num):
 
 
 # 데이터 불러오기 (0412 뉴스데이터)
-data = pd.read_csv('./2022-04-12 news data, test.csv')
+data = pd.read_csv('data/2022-04-12 news data, test.csv')
 
 # 714번째 결측치 제거
 df = data.drop([714], axis = 0)
 df = df.reset_index()
-
-title = df['기사제목']
-
-clean_title = []
-for i in range(len(title)):
-    clean_title.append(remove_stop_words(title[i]))
-
-# 이중 리스트 1차원으로 변환
-clean_title = sum(clean_title, [])
-
-# 단어사전 만들기
-title_dic = create_dic(clean_title, 1000)
 
 
 
@@ -80,8 +68,12 @@ def show_relevant_keyword_from_title(keyword, df): # 키워드와 사용할 뉴�
     # 제목이 대상일 때 max_features는 5000에서 가장 이상적인 결과를 보임
     tv = TfidfVectorizer(stop_words = 'english', max_features = 5000)
     x = tv.fit_transform(df.기사제목)
-    # words에는 feature가 된 단어들이 2000개 담겨 있음. 
+    # words에는 feature가 된 단어들이 5000개 담겨 있음. 
     words = tv.get_feature_names() 
+
+    # 불용어 처리
+    stopwords = pd.read_csv('./korean_stop_words.txt')
+    words = [w for w in words if w not in stopwords]
 
     ############## SVD 특이값 분해 ################
     from sklearn.decomposition import TruncatedSVD
@@ -118,9 +110,13 @@ def show_relevant_keyword_from_article(keyword, df): # 키워드와 사용할 �
     # max_features는 3000개에서 이상적인 결과를 보임
     tv = TfidfVectorizer(stop_words = 'english', max_features = 3000)
     x = tv.fit_transform(df.본문)
-    # words에는 feature가 된 단어들이 2000개 담겨 있음. 
+    # words에는 feature가 된 단어들이 3000개 담겨 있음. 
     words = tv.get_feature_names() 
 
+    # 불용어 처리
+    stopwords = pd.read_csv('./korean_stop_words.txt')
+    words = [w for w in words if w not in stopwords]
+``
     ############## SVD 특이값 분해 ################
     from sklearn.decomposition import TruncatedSVD
 
