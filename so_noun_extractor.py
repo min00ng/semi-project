@@ -15,3 +15,4 @@ def noun_extractor(sentence):
             print (result_iter[i][0])
         elif result_iter[i][1] == 'SL':
             print (result_iter[i][0])
+    return str(i)
