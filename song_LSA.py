@@ -150,12 +150,15 @@ def show_relevant_keyword(keyword, df): # 키워드와 사용할 뉴스 데이�
     
     # stop_words를 전에 했던 것처럼 txt 파일 형태로 제공하면 에러 발생!
     # 일단 에러를 막기 위해 'english'로 설정하였음. 
-    # max_features는 8000개로 설정함
-    tv = TfidfVectorizer(stop_words = 'english', max_features = 8000)
+    # max_features는 5000개로 설정함
+    tv = TfidfVectorizer(stop_words = 'english', max_features = 5000)
     data = df.기사제목 + df.본문
     x = tv.fit_transform(data)
-    # words에는 feature가 된 단어들이 2000개 담겨 있음. 
+    # words에는 feature가 된 단어들이 8000개 담겨 있음. 
     words = tv.get_feature_names() 
+    # 불용어 처리해주기
+    stopwords = pd.read_csv('./korean_stop_words.txt')
+    words = [w for w in words if w not in stopwords]
 
     ############## SVD 특이값 분해 ################
     from sklearn.decomposition import TruncatedSVD
@@ -173,7 +176,8 @@ def show_relevant_keyword(keyword, df): # 키워드와 사용할 뉴스 데이�
     kw_idx = svd.components_[:, word_idx].argmax()
 
     relevant_words_df = pd.DataFrame({'단어': words, 'loading': svd.components_[kw_idx]})
-    rel_words_df = relevant_words_df.sort_values('loading').tail()
+    # 상위 10가지 키워드 보여주기
+    rel_words_df = relevant_words_df.sort_values('loading').tail(10)
     rel_words_df = rel_words_df.sort_values('loading', ascending = False)
 
     # 사용자가 입력한 키워드와 관련있는 상위 5개 단어를 데이터 프레임으로 반환
