@@ -1,5 +1,8 @@
 # LSA 관련 구상 (구상단계임)
 
+###### 해결해야 할 사항 ######
+# 사용자가 입력한 키워드가 연관 키워드로 똑같이 추출되는 현상
+# --> stopwords에 추가 혹은 최종 상위 단어 df 뽑을 때 제거하는 방법으로 해결 예정. 
 
 
 ######################### 사용 데이터 #######################
@@ -72,7 +75,8 @@ def show_relevant_keyword_from_title(keyword, df): # 키워드와 사용할 뉴�
     words = tv.get_feature_names() 
 
     # 불용어 처리
-    stopwords = pd.read_csv('./korean_stop_words.txt')
+    stopwords = list(pd.read_csv('./korean_stop_words.txt')['아'])
+    stopwords.append(keyword) # 키워드 자기 자신이 연관 키워드로 나오는 것을 방지
     words = [w for w in words if w not in stopwords]
 
     ############## SVD 특이값 분해 ################
@@ -114,7 +118,8 @@ def show_relevant_keyword_from_article(keyword, df): # 키워드와 사용할 �
     words = tv.get_feature_names() 
 
     # 불용어 처리
-    stopwords = pd.read_csv('./korean_stop_words.txt')
+    stopwords = list(pd.read_csv('./korean_stop_words.txt')['아'])
+    stopwords.append(keyword) # 키워드 자기 자신이 연관 키워드로 나오는 것을 방지
     words = [w for w in words if w not in stopwords]
 ``
     ############## SVD 특이값 분해 ################
@@ -144,16 +149,18 @@ def show_relevant_keyword_from_article(keyword, df): # 키워드와 사용할 �
 
 def show_relevant_keyword(keyword, df): # 키워드와 사용할 뉴스 데이터를 인자로 입력받음
     
-    # stop_words를 전에 했던 것처럼 txt 파일 형태로 제공하면 에러 발생!
-    # 일단 에러를 막기 위해 'english'로 설정하였음. 
+    # 에러를 막기 위해 'english'로 설정하였음. 
     # max_features는 5000개로 설정함
     tv = TfidfVectorizer(stop_words = 'english', max_features = 5000)
     data = df.기사제목 + df.본문
     x = tv.fit_transform(data)
-    # words에는 feature가 된 단어들이 8000개 담겨 있음. 
+
+    # words에는 feature가 된 단어들이 5000개 담겨 있음. 
     words = tv.get_feature_names() 
+
     # 불용어 처리해주기
-    stopwords = pd.read_csv('./korean_stop_words.txt')
+    stopwords = list(pd.read_csv('./korean_stop_words.txt')['아'])
+    stopwords.append(keyword) # 키워드 자기 자신이 연관 키워드로 나오는 것을 방지
     words = [w for w in words if w not in stopwords]
 
     ############## SVD 특이값 분해 ################
@@ -178,3 +185,4 @@ def show_relevant_keyword(keyword, df): # 키워드와 사용할 뉴스 데이�
 
     # 사용자가 입력한 키워드와 관련있는 상위 5개 단어를 데이터 프레임으로 반환
     return rel_words_df
+
