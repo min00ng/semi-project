@@ -49,8 +49,10 @@ class newscrawler:
             url2 = url + "#&date=%2000:00:00&page=2"
         elif page_num < 11 and page_num > 2:
             url2 = url[:-1] + str(page_num)
-        elif page_num < 100 and page_num > 10:
+        elif page_num < 101 and page_num > 10:
             url2 = url[:-2] + str(page_num)
+        elif page_num <1001 and page_num > 100:
+            url2 = url[:-3] + str(page_num)
         return url2
 
     def get_news(self, url):
@@ -161,3 +163,40 @@ class newscrawler:
         df = pd.DataFrame(lst,columns=['카테고리', '언론사', '기사제목', '날짜', '본문'])
         return df
 
+    def category_crawler2(self,url):
+        all_news = []
+        again = True
+        page_num = 1
+        while again:
+            print(f"{page_num} 페이지 크롤링 중...")
+            lst = self.get_article_url(url)
+            for a_url in lst:
+                news = self.get_news(a_url)
+                news_date = news[3].replace(".","-")[:-1]
+                if news_date == "2022-04-07":
+                    again = False
+                    break
+                else:
+                    all_news.append(news)
+            page_num += 1
+            url = self.go_next_page(url,page_num)
+        return all_news[20:]
+
+    def save_news_file_by_category(self,file_path,df):#데이터프레임 형식 데이터 입력
+        today = "2022-04-14 ~ 2022-04-08 "
+        cg = df["카테고리"].iloc[0]
+        if cg == "정치":
+            cg2 = "Politics"
+        elif cg == "경제":
+            cg2 = "Economy"
+        elif cg == "사회":
+            cg2 = "Society"
+        elif cg == "생활":
+            cg2 = "Life"
+        elif cg == "IT":
+            cg2 = "IT"
+        else:
+            cg2 = "World"
+        outputFileName = today + cg2 +' news data.csv'
+        df.to_csv(file_path+outputFileName)
+        return 

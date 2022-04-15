@@ -4,18 +4,14 @@ import re
 import tensorflow as tf
 from tensorflow.keras.preprocessing.text import Tokenizer
 import numpy as np
+from konlpy.tag import Hannanum
 
 class preprocesser:
     def __init__(self) -> None:
-        pass
-    
-    def clean_text(text):  # 특수문자 제거
-        cleaned_text = re.sub('[a-zA-Z]', '', text)
-        cleaned_text = re.sub('[\{\}\[\]\/;:""|\·)\n\t\r\r\n\r\n\r\n\r\n\r\n*~`^\-_+<>@…©\#$%&\\\=\(\'\"]',
-                            '', cleaned_text)
-        final_cleaned_text = ' '.join(cleaned_text.split())
-        return final_cleaned_text
-
+        self.okt = Okt()
+        self.han = Hannanum
+        
+################ 기존 ################    
     def road_data(self,file_path): # 데이터 불러오기, 불필요한 열 삭제, null값 삭제.
         df = pd.read_csv(file_path)
         df2 = df.drop(["Unnamed: 0"],axis=1)
@@ -24,8 +20,7 @@ class preprocesser:
 
     def stemmer(self, text):  # 어간추출
         text = re.sub("[^가-힣ㄱ-ㅎㅏ-ㅣ\\s]","",text)
-        okt = Okt()
-        text = okt.morphs(text, stem= True)
+        text = self.okt.morphs(text, stem= True)
         return text # 각각의 단어가 리스트 형태로 리턴.
 
     def create_dic(self, texts, num): # 인자로 단어사전에 수록할 단어목록(texts), 단어 개수(num)를 입력 받음
@@ -55,3 +50,11 @@ class preprocesser:
 
         padded_np = np.array(encoded)
         return padded_np
+
+
+########## 새롭게 만들기 ##############
+    def clean_text(self, text) : # 문장의 특수문자를 공백으로 대체
+        pass
+
+    def get_nouns(self, text): # 문장에서 명사 뽑아오기
+        pass

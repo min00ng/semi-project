@@ -38,8 +38,6 @@ def create_dic(texts, num):
 
 
 
-####################################
-
 # 데이터 불러오기 (0412 뉴스데이터)
 data = pd.read_csv('./2022-04-12 news data, test.csv')
 
@@ -69,9 +67,9 @@ tokenized_nouns = ' '.join([word[0] for word in tokenized_title if word[1] == 'N
 print('품사 태깅 10개만 출력 :',tokenized_title[:10])
 print('명사 추출 :',tokenized_nouns)
 
-#####################################
 
 ############################################################
+
 
 
 ################## 키워드 추출 함수 만들기 ##################
@@ -79,11 +77,13 @@ print('명사 추출 :',tokenized_nouns)
 # LSA를 활용하여 사용자가 키워드를 입력했을 때, 관련 있는 상위 5개의 단어를 제시해주는 함수
 # 상위 5개 단어와 관련된 헤드라인의 뉴스를 제공해주면 좋을 것 같음
 
-# 둘 중 하나 사용하면 됨. Tfidf 사용
 
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
-def show_relevant_keyword(keyword, df): # 키워드와 사용할 뉴스 데이터를 인자로 입력받음
+############## 함수 1번 : 기사 제목에서 추출하기 ###############
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+def show_relevant_keyword_from_title(keyword, df): # 키워드와 사용할 뉴스 데이터를 인자로 입력받음
     
     # stop_words를 전에 했던 것처럼 txt 파일 형태로 제공하면 에러 발생! 
     # max_features는 임의로 2000개로 설정하였음.
@@ -118,3 +118,37 @@ def show_relevant_keyword(keyword, df): # 키워드와 사용할 뉴스 데이�
 
 
 
+############## 함수 2번 : 기사 본문에서 추출하기 ###############
+
+def show_relevant_keyword_from_article(keyword, df): # 키워드와 사용할 뉴스 데이터를 인자로 입력받음
+    
+    # stop_words를 전에 했던 것처럼 txt 파일 형태로 제공하면 에러 발생!
+    # 일단 에러를 막기 위해 'english'로 설정하였음. 
+    # max_features는 임의로 2000개로 설정하였음.
+    tv = TfidfVectorizer(stop_words = 'english', max_features = 2000)
+    x = tv.fit_transform(df.본문)
+    # words에는 feature가 된 단어들이 2000개 담겨 있음. 
+    words = tv.get_feature_names() 
+
+    ############## SVD 특이값 분해 ################
+    from sklearn.decomposition import TruncatedSVD
+
+    # n_components 는 max_features보다 적어야 함. 
+    # 임의로 300개로 설정하였음
+    svd = TruncatedSVD(n_components = 300, random_state = 1234)
+    word_idx = words.index(keyword) # 사용자에게 입력받은 키워드의 인덱스 위치 확인
+    svd.fit(x)
+
+    # 시각화 
+    # import matplotlib.pyplot as plt
+    # plt.plot(svd.components_[:, word_idx])
+
+    kw_idx = svd.components_[:, word_idx].argmax()
+
+    relevant_words_df = pd.DataFrame({'단어': words, 'loading': svd.components_[kw_idx]})
+    rel_words_df = relevant_words_df.sort_values('loading').tail()
+    rel_words_df = rel_words_df.sort_values('loading', ascending = False)
+
+    # 사용자가 입력한 키워드와 관련있는 상위 5개 단어를 데이터 프레임으로 반환
+    return rel_words_df
+    
