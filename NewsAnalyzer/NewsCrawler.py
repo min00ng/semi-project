@@ -149,8 +149,7 @@ class newscrawler:
             for a_url in lst:
                 news = self.get_news(a_url)
                 news_date = news[3].replace(".","-")[:-1]
-                if news_date == "2022-04-14":
-                # if news_date != str(datetime.date.today()):
+                if news_date != str(datetime.date.today()):
                     again = False
                     break
                 else:
