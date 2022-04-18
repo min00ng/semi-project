@@ -73,8 +73,7 @@ def show_relevant_keyword_from_title(keyword, df): # 키워드와 사용할 뉴�
     words = tv.get_feature_names() 
 
     # 불용어 처리
-    stopwords = list(pd.read_csv('./korean_stop_words.txt')['아'])
-    stopwords.append(keyword) # 키워드 자기 자신이 연관 키워드로 나오는 것을 방지
+    stopwords = pd.read_csv('./korean_stop_words.txt')['아']
     words = [w for w in words if w not in stopwords]
 
     ############## SVD 특이값 분해 ################
@@ -84,19 +83,16 @@ def show_relevant_keyword_from_title(keyword, df): # 키워드와 사용할 뉴�
     # 임의로 300개로 설정하였음
     svd = TruncatedSVD(n_components = 300, random_state = 1234)
     word_idx = words.index(keyword) # 사용자에게 입력받은 키워드의 인덱스 위치 확인
-    svd.components_[: word_idx]
-
-    # 시각화 
-    # import matplotlib.pyplot as plt
-    # plt.plot(svd.components_[:, word_idx])
+    svd.fit(x)
 
     kw_idx = svd.components_[:, word_idx].argmax()
 
     relevant_words_df = pd.DataFrame({'단어': words, 'loading': svd.components_[kw_idx]})
-    rel_words_df = relevant_words_df.sort_values('loading').tail()
+    rel_words_df = relevant_words_df[relevant_words_df['단어'] != keyword]
+    rel_words_df = rel_words_df.sort_values('loading').tail(10)
     rel_words_df = rel_words_df.sort_values('loading', ascending = False)
 
-    # 사용자가 입력한 키워드와 관련있는 상위 5개 단어를 데이터 프레임으로 반환
+    # 사용자가 입력한 키워드와 관련있는 상위 10개 단어를 데이터 프레임으로 반환
     return rel_words_df
     
 
@@ -116,10 +112,9 @@ def show_relevant_keyword_from_article(keyword, df): # 키워드와 사용할 �
     words = tv.get_feature_names() 
 
     # 불용어 처리
-    stopwords = list(pd.read_csv('./korean_stop_words.txt')['아'])
-    stopwords.append(keyword) # 키워드 자기 자신이 연관 키워드로 나오는 것을 방지
+    stopwords = pd.read_csv('./korean_stop_words.txt')['아']
     words = [w for w in words if w not in stopwords]
-``
+
     ############## SVD 특이값 분해 ################
     from sklearn.decomposition import TruncatedSVD
 
@@ -129,17 +124,14 @@ def show_relevant_keyword_from_article(keyword, df): # 키워드와 사용할 �
     word_idx = words.index(keyword) # 사용자에게 입력받은 키워드의 인덱스 위치 확인
     svd.fit(x)
 
-    # 시각화 
-    # import matplotlib.pyplot as plt
-    # plt.plot(svd.components_[:, word_idx])
-
     kw_idx = svd.components_[:, word_idx].argmax()
 
     relevant_words_df = pd.DataFrame({'단어': words, 'loading': svd.components_[kw_idx]})
-    rel_words_df = relevant_words_df.sort_values('loading').tail()
+    rel_words_df = relevant_words_df[relevant_words_df['단어'] != keyword]
+    rel_words_df = rel_words_df.sort_values('loading').tail(10)
     rel_words_df = rel_words_df.sort_values('loading', ascending = False)
 
-    # 사용자가 입력한 키워드와 관련있는 상위 5개 단어를 데이터 프레임으로 반환
+    # 사용자가 입력한 키워드와 관련있는 상위 10개 단어를 데이터 프레임으로 반환
     return rel_words_df
     
 
@@ -157,8 +149,7 @@ def show_relevant_keyword(keyword, df): # 키워드와 사용할 뉴스 데이�
     words = tv.get_feature_names() 
 
     # 불용어 처리해주기
-    stopwords = list(pd.read_csv('./korean_stop_words.txt')['아'])
-    stopwords.append(keyword) # 키워드 자기 자신이 연관 키워드로 나오는 것을 방지
+    stopwords = pd.read_csv('./korean_stop_words.txt')['아']
     words = [w for w in words if w not in stopwords]
 
     ############## SVD 특이값 분해 ################
@@ -170,17 +161,15 @@ def show_relevant_keyword(keyword, df): # 키워드와 사용할 뉴스 데이�
     word_idx = words.index(keyword) # 사용자에게 입력받은 키워드의 인덱스 위치 확인
     svd.fit(x)
 
-    # 시각화 
-    # import matplotlib.pyplot as plt
-    # plt.plot(svd.components_[:, word_idx])
-
     kw_idx = svd.components_[:, word_idx].argmax()
 
     relevant_words_df = pd.DataFrame({'단어': words, 'loading': svd.components_[kw_idx]})
+    
     # 상위 10가지 키워드 보여주기
-    rel_words_df = relevant_words_df.sort_values('loading').tail(10)
+    rel_words_df = relevant_words_df[relevant_words_df['단어'] != keyword]
+    rel_words_df = rel_words_df.sort_values('loading').tail(10)
     rel_words_df = rel_words_df.sort_values('loading', ascending = False)
 
-    # 사용자가 입력한 키워드와 관련있는 상위 5개 단어를 데이터 프레임으로 반환
+    # 사용자가 입력한 키워드와 관련있는 상위 10개 단어를 데이터 프레임으로 반환
     return rel_words_df
 
