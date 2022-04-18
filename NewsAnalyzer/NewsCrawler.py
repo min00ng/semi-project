@@ -153,6 +153,7 @@ class newscrawler:
                     again = False
                     break
                 else:
+                    news.append(a_url)
                     all_news.append(news)
             page_num += 1
             url = self.go_next_page(url,page_num)
@@ -160,7 +161,7 @@ class newscrawler:
                               # 원인을 모르겠음. 디버깅하면 제대로 동작하는데 디버깅없이하면 버그가발생함.
 
     def convert2df(self,lst):
-        df = pd.DataFrame(lst,columns=['카테고리', '언론사', '기사제목', '날짜', '본문'])
+        df = pd.DataFrame(lst,columns=['카테고리', '언론사', '기사제목', '날짜', '본문',"기사링크"])
         return df
 
     def category_crawler2(self,url):
