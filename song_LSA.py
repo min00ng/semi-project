@@ -13,7 +13,7 @@ import re
 import tensorflow as tf
 from tensorflow.keras.preprocessing.text import Tokenizer
 import numpy as np
-
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 ###### 필요한 함수 정의 ######
@@ -62,8 +62,6 @@ df = df.reset_index()
 
 
 ############## 함수 1번 : 기사 제목에서 추출하기 ###############
-
-from sklearn.feature_extraction.text import TfidfVectorizer
 
 def show_relevant_keyword_from_title(keyword, df): # 키워드와 사용할 뉴스 데이터를 인자로 입력받음
     
