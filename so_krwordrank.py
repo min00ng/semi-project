@@ -40,7 +40,7 @@ def make_wordcloud(passwords):
     plt.imshow(krwordrank_cloud, interpolation="bilinear")
     plt.show()
     outputFileName = '%s-%s-%s.png' % (now.year, now.month, now.day)
-    fig.savefig(outputFileName)
+    fig.savefig(outputFileName) #파일명 추후 카테고리 이름 추가 
 
 
     
