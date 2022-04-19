@@ -25,7 +25,7 @@ class preprocesser:
         return text_rmv
 
     def make_corpus(self,file_path):
-        corpus = DoublespaceLineCorpus("data/2022-04-13 news data.csv",iter_sent=True)
+        corpus = DoublespaceLineCorpus(file_path,iter_sent=True)
         word_extractor = WordExtractor()
         word_extractor.train(corpus)
         word_score = word_extractor.extract()
