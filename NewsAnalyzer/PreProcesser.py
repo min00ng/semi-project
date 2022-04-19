@@ -41,15 +41,14 @@ class preprocesser:
     def make_list_to_str(self, lst):
         return " ".join(lst)
 
-    def prep(self, file_path, title = True, tokenizing = True, save = False):
-        df = self.load_data(file_path)
+    def prep(self, corpus ,df, title = True, tokenizing = True, save = False):
         if title:
             data = df["기사제목"]
             name = "title"
         else:
             data = df["본문"]
             name = "news"
-        scores = self.make_corpus(file_path)
+        scores = corpus
         all_data = []
         for str in data:
             text = self.get_nouns(scores, str)
@@ -64,6 +63,12 @@ class preprocesser:
             dd.to_csv("data/" + outputFileName)
         else:
             return all_data
+
+    def select_category(self, df, category):
+        for i in range(len(df)):
+            if df.iloc[i].카테고리 != category:
+                df.drop(i,inplace=True)
+        return df
 
     def remove_stop_words(self):
         pass

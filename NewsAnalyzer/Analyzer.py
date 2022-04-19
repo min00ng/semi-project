@@ -94,7 +94,7 @@ class analysis:
         # 사용자가 입력한 키워드와 관련있는 상위 10개 단어를 데이터 프레임으로 반환
         return rel_words_df
 
-    def get_result(self,pp_text):
+    def get_result(self,pp_text): # 상위 20개의 키워드 + 중요도 + 연관단어 뽑는 함수.
         keywords = self.extract_keyword(pp_text)
         lst = []
         for word, num in keywords.items():
