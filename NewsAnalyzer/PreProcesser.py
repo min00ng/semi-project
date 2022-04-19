@@ -13,7 +13,7 @@ class preprocesser:
     def __init__(self) -> None:
         pass
 
-    def road_data(self,file_path): # 데이터 불러오기, 불필요한 열 삭제, null값 삭제.
+    def load_data(self,file_path): # 데이터 불러오기, 불필요한 열 삭제, null값 삭제.
         df = pd.read_csv(file_path)
         df2 = df.drop(["Unnamed: 0"],axis=1)
         df3 = df2.dropna(axis=0)
@@ -42,7 +42,7 @@ class preprocesser:
         return " ".join(lst)
 
     def prep(self, file_path, title = True, tokenizing = True, save = False):
-        df = self.road_data(file_path)
+        df = self.load_data(file_path)
         if title:
             data = df["기사제목"]
             name = "title"
