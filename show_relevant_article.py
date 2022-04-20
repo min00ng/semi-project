@@ -54,8 +54,9 @@ def kwordrank(string): #해당 함수에서 불용어 제거
 
 ############# show_relevant_article 함수 정의 ##############
 
-def show_relevant_article(df):
-    
+def show_relevant_article(category, df):     # 사용자에게 카테고리와 데이터를 인자로 입력받음
+    df = df[df['카테고리']==category].reset_index()
+
     # 기사 본문 클러스터링
     text = list(df.본문)
 
@@ -97,5 +98,7 @@ def show_relevant_article(df):
           data[j] = top_word_30[i]
 
     df = df.drop('cleaned_본문', axis = 1)
+    df = df.drop('index', axis = 1)
+    df = df.drop('Unnamed: 0', axis = 1)
 
     return df
