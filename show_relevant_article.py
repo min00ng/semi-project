@@ -84,7 +84,7 @@ def show_relevant_article(category, df):     # 사용자에게 카테고리와 �
     for i in range(len(labels_count)):
         df_i = df[df.labels==i]
 
-        df_i_content = list(df_i.cleaned_본문)
+        df_i_content = list(df_i.cleaned_제목)
         df_content_del = listToString(df_i_content)
 
         k = kwordrank(df_content_del)
