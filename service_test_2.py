@@ -9,8 +9,11 @@ def save_file(df,cg):
     df.to_csv("result_data/"+date+" "+cg+" "+"result.csv")
 
 def category_get_result(df,cg,corpus):
-    df_p = pp.select_category(df,cg)
-    all_n = pp.prep(corpus,df=df,title=True,tokenizing=False)
+    if cg != "all":
+        df_p = pp.select_category(df,cg)
+    else:
+        df_p = df
+    all_n = pp.prep(corpus,df=df_p,title=True,tokenizing=False)
     all_keywords = an.get_result(all_n)
     save_file(all_keywords,cg)
 

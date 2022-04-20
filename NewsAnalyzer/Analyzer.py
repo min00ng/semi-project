@@ -9,6 +9,7 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing.text import Tokenizer
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import TruncatedSVD
 
 class analysis:
     def __init__(self) -> None:
@@ -62,34 +63,29 @@ class analysis:
         # 불용어 리스트 불러오기
         stopwords = pd.read_csv('./korean_stop_words.txt', encoding = 'utf8')['아']
 
-        ############## SVD 특이값 분해 ################
-        from sklearn.decomposition import TruncatedSVD
+        ############## SVD 특이값 분해 ###############
 
         # n_components 는 max_features보다 적어야 함. 
         # 임의로 300개로 설정하였음
         svd = TruncatedSVD(n_components = 300, random_state = 1234)
-        word_idx = words.index(keyword) # 사용자에게 입력받은 키워드의 인덱스 위치 확인
-        svd.fit(x)
-
-        kw_idx = svd.components_[:, word_idx].argmax()
-
-        relevant_words_df = pd.DataFrame({'단어': words, 'loading': svd.components_[kw_idx]})
-        
-        ########### 상위 10가지 키워드 보여주기 ##########
-        
-        # 불용어 처리
-        rel_words_df = relevant_words_df[relevant_words_df['단어'] != keyword]
-        drop_index = []
-        for i in rel_words_df['단어']:
-            if i in list(stopwords):
-                idx = rel_words_df[rel_words_df['단어'] == i].index[0]
-                drop_index.append(idx)
-        rel_words_df.drop(drop_index, inplace = True)
-        
-        # 상위 10개의 단어 추출
-        rel_words_df = rel_words_df.sort_values('loading').tail(10)
-        rel_words_df = rel_words_df.sort_values('loading', ascending = False)
-
+        try:
+            word_idx = words.index(keyword) # 사용자에게 입력받은 키워드의 인덱스 위치 확인
+            svd.fit(x)
+            kw_idx = svd.components_[:, word_idx].argmax()
+            relevant_words_df = pd.DataFrame({'단어': words, 'loading': svd.components_[kw_idx]})
+            rel_words_df = relevant_words_df[relevant_words_df['단어'] != keyword]
+            drop_index = []
+            for i in rel_words_df['단어']:
+                if i in list(stopwords):
+                    idx = rel_words_df[rel_words_df['단어'] == i].index[0]
+                    drop_index.append(idx)
+            rel_words_df.drop(drop_index, inplace = True)
+                
+            # 상위 10개의 단어 추출
+            rel_words_df = rel_words_df.sort_values('loading').tail(10)
+            rel_words_df = rel_words_df.sort_values('loading', ascending = False)
+        except ValueError:
+            rel_words_df = pd.DataFrame([{"단어":"failed","loading" : 0}])
 
         # 사용자가 입력한 키워드와 관련있는 상위 10개 단어를 데이터 프레임으로 반환
         return rel_words_df
@@ -103,7 +99,8 @@ class analysis:
         all_key_words = lst[:20]
         for word in all_key_words:
             rkw = self.show_relevant_keyword(word[0],pp_text)
-            word.append(rkw.단어.values.tolist())
+            if rkw.단어.iloc[0] != "failed":
+                word.append(rkw.단어.values.tolist())
         # 기사 제목, 링크, 본문요약 추가
         result = pd.DataFrame(all_key_words,columns=["키워드","중요도","연관단어"])
         return result

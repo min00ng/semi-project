@@ -69,7 +69,7 @@ class preprocesser:
         for i in range(len(df)):
             if df.iloc[i].카테고리 == category:
                 data.append(df.iloc[i])
-        dataframe = pd.DataFrame(data)
+        dataframe = pd.DataFrame(data,columns=['카테고리', '언론사', '기사제목', '날짜', '본문',"기사링크"])
         return dataframe
 
     def remove_stop_words(self):
