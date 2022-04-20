@@ -104,4 +104,6 @@ class analysis:
         for word in all_key_words:
             rkw = self.show_relevant_keyword(word[0],pp_text)
             word.append(rkw.단어.values.tolist())
-        return all_key_words
+        # 기사 제목, 링크, 본문요약 추가
+        result = pd.DataFrame(all_key_words,columns=["키워드","중요도","연관단어"])
+        return result

@@ -65,10 +65,12 @@ class preprocesser:
             return all_data
 
     def select_category(self, df, category):
+        data = []
         for i in range(len(df)):
-            if df.iloc[i].카테고리 != category:
-                df.drop(i,inplace=True)
-        return df
+            if df.iloc[i].카테고리 == category:
+                data.append(df.iloc[i])
+        dataframe = pd.DataFrame(data)
+        return dataframe
 
     def remove_stop_words(self):
         pass
