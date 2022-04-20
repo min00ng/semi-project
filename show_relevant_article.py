@@ -46,7 +46,7 @@ def kwordrank(string): #해당 함수에서 불용어 제거
         stop_words_file.close()
     stopwords=stop_words_list
     texts = [string]
-    keywords = summarize_with_keywords(texts, min_count=2, max_length=10,beta=0.85, max_iter=10, stopwords=stopwords, verbose=True)
+    keywords = summarize_with_keywords(texts, min_count = 1, max_length=10, beta=0.85, max_iter=10, stopwords=stopwords, verbose=True)
     passwords = {word:score for word, score in sorted(
         keywords.items(), key=lambda x:-x[1])[:300] if not (word in stopwords)}
     return passwords
@@ -88,7 +88,8 @@ def show_relevant_article(category, df):     # 사용자에게 카테고리와 �
         df_content_del = listToString(df_i_content)
 
         k = kwordrank(df_content_del)
-        k_1 = next(iter(k))
+        # k_1 = next(iter(k))
+        k_1 = list(k.keys())[0]
         top_word_30.append(k_1)
 
     # 숫자 라벨과 kwordrank로 추출한 키워드를 replace
