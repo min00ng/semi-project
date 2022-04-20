@@ -136,9 +136,8 @@ def show_relevant_keyword_from_article(keyword, df): # 키워드와 사용할 �
 
 def show_relevant_keyword(keyword, df): # 키워드와 사용할 뉴스 데이터를 인자로 입력받음
     
-    # 에러를 막기 위해 'english'로 설정하였음. 
     # max_features는 5000개로 설정함
-    tv = TfidfVectorizer(stop_words = 'english', max_features = 5000)
+    tv = TfidfVectorizer(max_features = 5000)
     data = df.기사제목 + df.본문
     x = tv.fit_transform(data)
 
