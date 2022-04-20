@@ -72,22 +72,23 @@ class showRelevantArticle:
 
     def execute_class(self, data):
         self.clustering (self, df)
-        
+        # labels 별로 df 출력
+
+        for i in range(len(labels_conut)):
+            df_i = df[df.labels==i]
+            df_i_title = list(df_i.기사제목)
+
+            title_del = self.listToString(df_i_title)
+            k = self.kwordrank(title_del)
+                
 
 
 
 ###########################################################################################
 
 
-# labels 별로 df 출력
-for i in range(len(labels_conut)):
-  df_i = df[df.labels==i]
 
-  df_i_title = list(df_i.기사제목)
 
-  title_del = listToString(df_i_title)
-  k = kwordrank(title_del)
-  print(k)
 
 ## 키버트 돌리기 
 
