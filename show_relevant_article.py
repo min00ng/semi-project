@@ -58,16 +58,16 @@ def show_relevant_article(category, df):     # 사용자에게 카테고리와 �
     df = df[df['카테고리']==category].reset_index()
 
     # 기사 본문 클러스터링
-    text = list(df.본문)
+    text = list(df.기사제목) # 본문보다 효과가 좋은 것 같음. 본문으로 돌리려면 df.본문이라고 수정하면 됨
 
     lst = []
     for i in range(len(text)):
-      text[i] = clean_text(text[i])
-      lst.append(text[i])
+        text[i] = clean_text(text[i])
+        lst.append(text[i])
     
-    df['cleaned_본문'] = lst
+    df['cleaned_제목'] = lst
 
-    content = df['cleaned_본문'].tolist()
+    content = df['cleaned_제목'].tolist()
     n_clusters = 30 # 군집화할 갯수
     vectorizer = CountVectorizer()
     X = vectorizer.fit_transform(content)
@@ -82,22 +82,22 @@ def show_relevant_article(category, df):     # 사용자에게 카테고리와 �
     # kwrodrank로 라벨 키워드 뽑기 
     top_word_30 = []
     for i in range(len(labels_count)):
-      df_i = df[df.labels==i]
+        df_i = df[df.labels==i]
 
-      df_i_content = list(df_i.cleaned_본문)
-      df_content_del = listToString(df_i_content)
+        df_i_content = list(df_i.cleaned_본문)
+        df_content_del = listToString(df_i_content)
 
-      k = kwordrank(df_content_del)
-      k_1 = next(iter(k))
-      top_word_30.append(k_1)
+        k = kwordrank(df_content_del)
+        k_1 = next(iter(k))
+        top_word_30.append(k_1)
 
     # 숫자 라벨과 kwordrank로 추출한 키워드를 replace
     for i in range(len(labels_count)):
-      for j in range(len(data)):
-        if i == data[j]:
-          data[j] = top_word_30[i]
+        for j in range(len(data)):
+            if i == data[j]:
+                data[j] = top_word_30[i]
 
-    df = df.drop('cleaned_본문', axis = 1)
+    df = df.drop('cleaned_제목', axis = 1)
     df = df.drop('index', axis = 1)
     df = df.drop('Unnamed: 0', axis = 1)
 
